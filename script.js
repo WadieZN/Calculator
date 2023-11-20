@@ -73,7 +73,7 @@ clear.addEventListener('click', () => {
 
 del.addEventListener('click', () => {
 
-    if (displayValue.textContent.length === 13) {
+    if (displayValue.textContent.length === 12) {
         displayValue.style.cssText = 'font-size: 45px';
     } 
     if (displayValue.textContent === "Infinity") {
@@ -88,7 +88,7 @@ del.addEventListener('click', () => {
 number.forEach(button => {
     button.addEventListener('click', () => {
 
-        if (displayValue.textContent.length < 19) {
+        if (displayValue.textContent.length < 17) {
             if (displayValue.textContent === "Infinity") {
                 displayValue.textContent = '';
                 previousValue.textContent = '';
@@ -101,7 +101,7 @@ number.forEach(button => {
             }
         }
 
-        if (displayValue.textContent.length === 13) {
+        if (displayValue.textContent.length === 12) {
             displayValue.style.cssText = 'font-size: 30px';
         }
 
@@ -117,33 +117,34 @@ let current;
 operators.forEach(button => {
     button.addEventListener('click', () => {
 
-        clickCount++;
-        displayValue.style.cssText = 'font-size: 45px';
-
         operator = button.textContent;
 
-        decimal.disabled = false;
-        percent.disabled = false;
-
-        if (displayValue.textContent === '') {
-            displayValue.textContent = 0;
-        }
-
-        if (clickCount === 1) {
-
-            previousValue.textContent = `${displayValue.textContent} ${operator}`;
+        if (displayValue.textContent === ''){
+            previousValue.textContent = `${previousValue.textContent.split('').slice(0, -2).join('')} ${operator}`;
             current = operator;
-            num1 = parseFloat(previousValue.textContent.split('').slice(0, -2).join(''));
-            displayValue.textContent = '';
 
         } else {
+            clickCount++;
+            displayValue.style.cssText = 'font-size: 45px';
 
-            const result = parseFloat(operate(num1, current, num2));
-            previousValue.textContent = `${result} ${operator}`;
-            current = operator;
-            num1 = parseFloat(previousValue.textContent.split('').slice(0, -2).join(''));
-            displayValue.textContent = '';
+            decimal.disabled = false;
+            percent.disabled = false;
 
+            if (clickCount === 1) {
+
+                previousValue.textContent = `${displayValue.textContent} ${operator}`;
+                current = operator;
+                num1 = parseFloat(previousValue.textContent.split('').slice(0, -2).join(''));
+                displayValue.textContent = '';
+
+            } else {
+
+                const result = parseFloat(operate(num1, current, num2));
+                previousValue.textContent = `${result} ${operator}`;
+                current = operator;
+                num1 = parseFloat(previousValue.textContent.split('').slice(0, -2).join(''));
+                displayValue.textContent = '';
+        }
         }
 
     });
@@ -161,18 +162,26 @@ equals.addEventListener('click', () => {
         previousValue.textContent = `${num1} ${operator} ${num2}`;
         displayValue.textContent = parseFloat(operate(num1, operator, num2));
         percent.disabled = false;
-        decimal.disabled = false;
+        decimal.disabled = true;
     }
-    if (displayValue.textContent.length > 13) {
-        displayValue.style.cssText = 'font-size: 28px';
+    if (displayValue.textContent.length > 12) {
+        displayValue.style.cssText = 'font-size: 30px';
+    }
+
+    if (displayValue.textContent.length > 17){
+        displayValue.textContent = num1.toExponential(10);
     }
 });
 
 // ------------------- Percentage
 
 percent.addEventListener('click', () => {
-    displayValue.textContent = displayValue.textContent / 100;
-    num2 = parseFloat(displayValue.textContent);
+    if (displayValue.textContent === '') {
+        displayValue.textContent = '0.0';
+    } else {
+        displayValue.textContent = displayValue.textContent / 100;
+        num2 = parseFloat(displayValue.textContent);
+    }
     percent.disabled = true;
     decimal.disabled = true;
 });
